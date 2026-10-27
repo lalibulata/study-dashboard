@@ -83,3 +83,12 @@ $('import').onchange=async e=>{try{let raw=JSON.parse(await e.target.files[0].te
 function clock(){const d=today();$('clock').textContent=new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date())+' · 北京';$('countdowns').textContent=[['雅思','2026-11-22'],['随机信号期中','2026-11-15']].map(([s,date])=>{let n=diff(date,d);return s+(n>=0?'剩余 '+n+' 天':'已过 '+Math.abs(n)+' 天')}).join('  /  ')+'  /  期末：2027 年 1 月初，具体日期待定'}
 function render(){renderDay();renderWeek();renderScores();renderJournal()}
 $('calendarPrev').onclick=()=>moveMonth(-1);$('calendarNext').onclick=()=>moveMonth(1);$('calendarToday').onclick=()=>{$('planDate').value=today();calendarMonth=today().slice(0,7);render()};$('planDate').value=today();document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{render();openTab(b.dataset.tab)});applyTheme();clock();setInterval(()=>clock(),30000);render();save();
+
+// 日计划日期翻页：沿用日期选择器的刷新逻辑。
+function movePlanDay(offset){
+  const input=$('planDate');
+  input.value=add(dateOK(input.value)?input.value:today(),offset);
+  input.dispatchEvent(new Event('change',{bubbles:true}));
+}
+$('prevDay').onclick=()=>movePlanDay(-1);
+$('nextDay').onclick=()=>movePlanDay(1);
